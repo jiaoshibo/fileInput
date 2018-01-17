@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{margin: 0;padding: 0;}
+        .box{
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgb(90, 7, 110);
+        }
+        .box input{
+            position: absolute;
+            left: -9999px;
+        }
+        .label{
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: #ccc;
+            z-index: 10;
+            text-align: center;
+            line-height: 200px;
+            overflow: hidden;
+        }
+        .img{
+            height: 200px;
+            
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 9;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <input type="file" accept="image/png, image/jpeg" id="input" @change="fileChange" ref="inputer">
+        <label for="input" class="label">
+            <p><i>:)</i> 点击上传图片</p>
+            <img :src="dataUrl" alt="" class="img">
+        </label>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script>
+        var box=new Vue({
+            el:'.box',
+            data:{
+                // 转base64码忠厚的data字段
+                dataUrl: ''
+            },
+            props:{
+                value:{
+                    default: undefined
+                }
+            },
+            methods:{
+
+                imgPureview(file){
+                    let self = this;
+                    // 检查是否支持 FileReader
+                    if(!file || !URL.createObjectURL)return;
+                    if(/^image/.test(file.type)){
+                        this.dataUrl=URL.createObjectURL(file);
+                    }
+                    console.log(self.dataUrl)
+                },
+                fileChange(e){
+                    // 每次重新选择都进行对上一次的销毁
+                   // this.dataUrl && URL.revokeObjectURL(dataUrl);
+
+                    let inputDOM = this.$refs.inputer;
+                    // 通过dom获取文件数据
+                    this.file = inputDOM.files[0];
+
+                  
+
+                    let size = Math.floor(this.file.size/1024);
+                    if(size>2048){
+                        console.log('文件太大');
+                        return false;
+                    }
+                    this.$emit('input',this.file);
+
+                    this.fileName=this.file.name;
+
+                    // 获取到文件对象就进行预览
+                    this.imgPureview(this.file);
+                }
+            }
+        })
+    </script>
+</body>
+</html>
