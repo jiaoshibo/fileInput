@@ -49,7 +49,6 @@
             <img :src="dataUrl" alt="" class="img">
         </label>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script>
         var box=new Vue({
@@ -64,7 +63,11 @@
                 }
             },
             methods:{
-
+                preventDefaultEvent(eventName){
+                    document.addEventListener(eventName,function(e){
+                        e.preventDefault()
+                    },fales)
+                },
                 imgPureview(file){
                     let self = this;
                     // 检查是否支持 FileReader
@@ -96,6 +99,11 @@
                     // 获取到文件对象就进行预览
                     this.imgPureview(this.file);
                 }
+            },
+            mounted(){
+                ['dragleave','drop','dragenter','dragover'].forEach(e=>{
+                    this.preventDefaultEvent(e)
+                })
             }
         })
     </script>
